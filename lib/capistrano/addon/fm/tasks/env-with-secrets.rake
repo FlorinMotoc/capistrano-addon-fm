@@ -1,3 +1,5 @@
+require 'tempfile'
+
 namespace "env" do
   # Set default values
   set :default_local_path, './'
@@ -66,9 +68,17 @@ namespace "env" do
           secrets[$1]
         end
       end
+      decrypted_content = decrypted_lines.join
 
-      # Write the modified .env file back to the server
-      execute :echo, "'#{decrypted_lines.join}' > #{shared_path}/.env.tmp", verbosity: :DEBUG
+      # Create a temporary local file with the decrypted content
+      Tempfile.open('.env.tmp') do |tempfile|
+        tempfile.write(decrypted_content)
+        tempfile.write("\n")
+        tempfile.close
+
+        # Upload the temporary file to the remote server
+        upload! tempfile.path, "#{shared_path}/.env.tmp", verbosity: :DEBUG
+      end
     end
   end
   namespace :local do

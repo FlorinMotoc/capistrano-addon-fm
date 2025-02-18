@@ -33,7 +33,13 @@ new tasks (example run: cap prod TASK - replace 'prod' with your stage (devel/lo
     cap prod nginx:reload
     cap prod nginx:restart
     cap prod nginx:status
-#### fpm related commands: TO-BE-ADDED
+#### php-fpm related commands
+    cap prod fpm:start
+    cap prod fpm:stop
+    cap prod fpm:reload
+    cap prod fpm:restart
+    cap prod fpm:status
+    cap prod fpm:cfg:show                               Run `cat /etc/php/8.2/fpm/pool.d/www.conf | egrep -v '^ *(#|;|$)'`
 #### system related commands:
     cap prod php                                        Run 'php -v'
     cap prod composer                                   Run 'composer --version'
@@ -75,6 +81,8 @@ set :local_path, './'
 set :file_to_encrypt, 'cap-secrets-LOCAL.txt'
 set :file_to_decrypt, 'cap-secrets.enc.b64'
 set :encryption_key_file, 'cap-secrets-encryption-key-LOCAL.txt'
+# php-fpm
+set :USE_PHP_VERSION, "8.4"
 ```
 
 ## env-with-secrets
@@ -115,6 +123,13 @@ set :encryption_key_file, 'cap-secrets-encryption-key-LOCAL.txt'
   - Preferably to update `.gitignore` file with the 2 `LOCAL` files
     - `cap-secrets-LOCAL.txt`
     - `cap-secrets-encryption-key-LOCAL.txt`
+
+## php-fpm
+- For each `server` line, you can specify which php version to use via `use_php_version`. Example:
+    - `server "web1", user: "user1", roles: %w{ app web etc }, use_php_version: 8.5`
+- You can also specify (deploy.rb/{stage}.rb) a default version to use; this will be used if server's `use_php_version` is not set
+  - `set :USE_PHP_VERSION, "8.4"`
+- If none is set, then default `8.2` will be used
 
 ## License
 

@@ -42,6 +42,7 @@ namespace "env" do
       base64_file = fetch(:file_to_decrypt, fetch(:default_file_to_decrypt))
       encrypted_file = base64_file.gsub('.b64', '')
       decrypted_file_tmp = "cap-secrets-tmp.txt"
+      latest_release_path = "#{shared_path.sub(/shared$/, 'releases')}/#{capture("ls -1 #{shared_path.sub(/shared$/, 'releases')} | sort -r | head -n 1").strip}"
 
       # Read the .env file
       env_file = capture(:cat, "#{shared_path}/.env.tmp")
@@ -50,7 +51,7 @@ namespace "env" do
       encryption_key = File.read(encryption_key_file).strip
 
       # Decode and decrypt cap-secrets.enc.b64 into a temporary file cap-secrets-tmp.txt
-      execute "base64 -d #{release_path}/#{base64_file} > #{shared_path}/#{encrypted_file} && openssl enc -aes-256-cbc -d -pbkdf2 -in #{shared_path}/#{encrypted_file} -out #{shared_path}/#{decrypted_file_tmp} -pass pass:#{encryption_key}"
+      execute "base64 -d #{latest_release_path}/#{base64_file} > #{shared_path}/#{encrypted_file} && openssl enc -aes-256-cbc -d -pbkdf2 -in #{shared_path}/#{encrypted_file} -out #{shared_path}/#{decrypted_file_tmp} -pass pass:#{encryption_key}"
 
       # Read the secrets from the temporary cap-secrets-tmp.txt file
       secrets = {}
@@ -136,7 +137,7 @@ namespace "env" do
       use_local_path = fetch(:local_path, fetch(:default_local_path))
       Dir.chdir(use_local_path) do
         file = fetch(:file_to_encrypt, fetch(:default_file_to_encrypt))
-        puts "Contents of file #{use_local_path}/#{file}:\n\n"
+        puts "Contents of file #{use_local_path}#{file}:\n\n"
         system("cat #{file}")
       end
     end

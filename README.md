@@ -17,6 +17,8 @@ require 'capistrano/addon/fm'
 ## Usage
 
 ### this will add new tasks for `cap` command
+#### addon related commands (no stage needed):
+    cap fm:readme                                       Will output this readme file
 new tasks (example run: cap prod TASK - replace 'prod' with your stage (devel/local/etc))
 #### supervisor related commands:
     cap prod supervisor:start                           Will run supervisorctl `start all`
@@ -57,11 +59,11 @@ new tasks (example run: cap prod TASK - replace 'prod' with your stage (devel/lo
     cap prod system:disk_space: all|df|zfs|btrfs
     cap prod system:connections:count: total|per_address|via_ss
 #### env-with-secrets:
-    cap env:upload                                      Will upload .env file to server and decrypt
-    cap env:upload:diff                                 Will run `diff` command to server's .env versus local .env - decrypted
-    cap env:local:encrypt_file                          Will encrypt `cap-secrets-LOCAL.txt` to `ap-secrets.enc.b64`
-    cap env:local:decrypt_file                          Will decrypt `ap-secrets.enc.b64` into `cap-secrets-LOCAL.txt`
-    cap env:local:secrets                               cat `cap-secrets-LOCAL.txt`
+    cap prod env:upload                                      Will upload .env file to server and decrypt
+    cap prod env:upload:diff                                 Will run `diff` command to server's .env versus local .env - decrypted
+    cap prod env:local:encrypt_file                          Will encrypt `cap-secrets-LOCAL.txt` to `ap-secrets.enc.b64`
+    cap prod env:local:decrypt_file                          Will decrypt `ap-secrets.enc.b64` into `cap-secrets-LOCAL.txt`
+    cap prod env:local:secrets                               cat `cap-secrets-LOCAL.txt`
 #### custom related commands:
     cap prod cat:env                                    Run `cat /var/www/*/*/.env`
     cap prod empty_file:check                           Run `la -lah on nginx, fpm, laravel and var/www/*/current/logs/*`
